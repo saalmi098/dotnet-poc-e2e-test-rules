@@ -8,13 +8,18 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace E2ETestRules
 {
-    /// <summary>PWNET003: test methods without any assertion-like invocation.</summary>
+    /// <summary>
+    /// PWNET003 - test methods without any assertion-like invocation.
+    /// <para><b>Finds:</b> methods marked <c>[Fact]</c>, <c>[Theory]</c>, <c>[Test]</c> or <c>[TestMethod]</c> whose body has no
+    /// invocation named <c>Expect*</c>/<c>Assert*</c>/<c>Should*</c> (or called on an <c>Assert*</c>/<c>Should*</c> receiver).</para>
+    /// <para><b>Why:</b> a test that never asserts passes even when the app is broken.</para>
+    /// <para><b>Ignores:</b> empty bodies and skipped tests (<c>Skip</c> in the name, attribute argument or a called method).</para>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class RequireAssertionInTestAnalyzer : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "PWNET003";
 
-        private static readonly string[] TestAttributes = { "Fact", "Theory", "Test", "TestMethod" };
         private static readonly string[] AssertionPrefixes = { "Expect", "Assert", "Should" };
 
         private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(
@@ -41,7 +46,7 @@ namespace E2ETestRules
 
             var testAttributes = method.AttributeLists
                 .SelectMany(list => list.Attributes)
-                .Where(IsTestAttribute)
+                .Where(SyntaxHelpers.IsTestAttribute)
                 .ToList();
             if (testAttributes.Count == 0)
             {
@@ -67,24 +72,6 @@ namespace E2ETestRules
             }
 
             context.ReportDiagnostic(Diagnostic.Create(Rule, method.Identifier.GetLocation()));
-        }
-
-        private static bool IsTestAttribute(AttributeSyntax attribute)
-        {
-            var name = attribute.Name switch
-            {
-                QualifiedNameSyntax q => q.Right.Identifier.ValueText,
-                AliasQualifiedNameSyntax a => a.Name.Identifier.ValueText,
-                SimpleNameSyntax s => s.Identifier.ValueText,
-                _ => string.Empty,
-            };
-
-            if (name.EndsWith("Attribute", StringComparison.Ordinal))
-            {
-                name = name.Substring(0, name.Length - "Attribute".Length);
-            }
-
-            return Array.IndexOf(TestAttributes, name) >= 0;
         }
 
         private static bool HasSkipArgument(AttributeSyntax attribute) =>

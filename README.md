@@ -1,6 +1,6 @@
 # dotnet-poc-e2e-test-rules
 
-Roslyn analyzers (`PWNET001`–`PWNET005`) for Playwright.NET E2E test code. They run in Visual Studio, Rider, VS Code (C# Dev Kit) and `dotnet build`. SonarQube can import their output later.
+Roslyn analyzers (`PWNET001`–`PWNET006`) for Playwright.NET E2E test code. They run in Visual Studio, Rider, VS Code (C# Dev Kit) and `dotnet build`. SonarQube can import their output later.
 
 The analyzer targets `netstandard2.0` and has **no reference to Playwright**. It matches Playwright APIs by namespace and type name (`Microsoft.Playwright.IPage`, ...).
 
@@ -24,6 +24,7 @@ Category for all rules: `Playwright E2E`. Help link: `https://example.com/docs/e
 | PWNET003 | `[Fact]`/`[Theory]`/`[Test]`/`[TestMethod]` methods with no invocation named `Expect*`/`Assert*`/`Should*` (or called on an `Assert*`/`Should*` receiver such as `Assert.Equal`). Empty bodies and skipped tests are ignored. |
 | PWNET004 | Non-local `http(s)://` string literals; identifiers (variables, parameters, properties) and string literals containing `password`, `passwd`, `secret`, `token`, `apiKey` (case-insensitive). Test code only. |
 | PWNET005 | Un-awaited task-returning `*Async` calls whose containing type name/namespace contains `Playwright`: bare statements and `_ = ...` discards. |
+| PWNET006 | Playwright API calls (any method on a type in `Microsoft.Playwright.*`) inside a **test class**, i.e. any class declaring a `[Fact]`/`[Theory]`/`[Test]`/`[TestMethod]` method, including its helper methods and lambdas. Page object classes (no test methods) may use Playwright freely. `Assertions.Expect(...)` and `*Assertions` types (`ToBeVisibleAsync`, ...) are allowed. |
 
 "Test code" (PWNET001, PWNET004) means: file path contains `/e2e/` or `/tests/` (either slash direction, case-insensitive), or the assembly name ends with `.Tests`.
 
@@ -80,5 +81,6 @@ Configure severities in `.editorconfig` (`dotnet_diagnostic.PWNET001.severity = 
 - **PWNET003**: a helper like `await LoginAndVerifyAsync()` hides the assertion and is reported, while a call named `AssertSomething()` that asserts nothing counts as an assertion. Attributes are matched by name only (no check that they come from xUnit/NUnit/MSTest).
 - **PWNET004**: `token`/`secret`/`password` anywhere in an identifier or literal matches, so UI labels like `GetByLabel("Password")` or `"token-expired"` are reported. Environment variable names containing those words are reported too. URLs with a non-loopback host are reported even if they are fixtures for external content.
 - **PWNET005**: only discarded results are detected (bare call, `_ =`). A task stored in a variable and never awaited is not reported. It overlaps with compiler CS4014 inside `async` methods but also covers non-async methods. Calls that are `.ConfigureAwait(false)`-ed without `await` are not detected.
+- **PWNET006**: one report per Playwright call, so `page.GetByRole(..).ClickAsync()` gives two. Property access (`page.Url`) is not detected. `Expect(page.Locator(..))` still reports the inner call. Test base classes holding Playwright setup are flagged if they declare a test method; put setup in a non-test class (see `BrowserSession` in the sample). Invocations in nested types are judged by the nested type, not the outer test class.
 - PWNET001/004 depend on path conventions; projects not named `*.Tests` and not under a `tests`/`e2e` folder are skipped.
 - `Microsoft.CodeAnalysis.CSharp` 4.11 is referenced, so the host needs VS 17.11 / .NET SDK 8.0.400 or newer.

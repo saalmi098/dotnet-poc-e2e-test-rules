@@ -17,3 +17,4 @@ dotnet_diagnostic.PWNET002.severity = warning
 dotnet_diagnostic.PWNET003.severity = warning
 dotnet_diagnostic.PWNET004.severity = warning
 dotnet_diagnostic.PWNET005.severity = error
+dotnet_diagnostic.PWNET006.severity = warning

@@ -15,15 +15,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../src/E2ETestRules/E2ETestRules.csproj"
-                      OutputItemType="Analyzer"
-                      ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/E2ETestRules/E2ETestRules.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup>
     <!-- Intentionally violating examples are kept as documentation only. -->
     <Compile Remove="Examples/**/*.cs" />
     <None Include="Examples/**/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Pwnet006Violation.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Pwnet006Violation.cs" />
   </ItemGroup>
 
 </Project>

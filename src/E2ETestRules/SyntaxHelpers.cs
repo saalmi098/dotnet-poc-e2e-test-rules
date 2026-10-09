@@ -23,6 +23,27 @@ namespace E2ETestRules
             }
         }
 
+        private static readonly string[] TestAttributes = { "Fact", "Theory", "Test", "TestMethod" };
+
+        /// <summary>True for [Fact], [Theory], [Test], [TestMethod] (matched by name, with or without "Attribute").</summary>
+        public static bool IsTestAttribute(AttributeSyntax attribute)
+        {
+            var name = attribute.Name switch
+            {
+                QualifiedNameSyntax q => q.Right.Identifier.ValueText,
+                AliasQualifiedNameSyntax a => a.Name.Identifier.ValueText,
+                SimpleNameSyntax s => s.Identifier.ValueText,
+                _ => string.Empty,
+            };
+
+            if (name.EndsWith("Attribute", System.StringComparison.Ordinal))
+            {
+                name = name.Substring(0, name.Length - "Attribute".Length);
+            }
+
+            return System.Array.IndexOf(TestAttributes, name) >= 0;
+        }
+
         public static string DocUri(string id) => "https://example.com/docs/e2e-test-rules/" + id;
     }
 }

@@ -6,7 +6,13 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace E2ETestRules
 {
-    /// <summary>PWNET001: Task.Delay in test code.</summary>
+    /// <summary>
+    /// PWNET001 - PWNET001: Task.Delay in test code.
+    /// <para><b>Finds:</b> calls to <c>System.Threading.Tasks.Task.Delay</c> in test code (path contains
+    /// <c>/e2e/</c> or <c>/tests/</c>, or assembly name ends with <c>.Tests</c>).</para>
+    /// <para><b>Why:</b> fixed sleeps make tests slow and flaky; use Playwright auto-waiting or web-first assertions.</para>
+    /// <para><b>Ignores:</b> <c>Delay</c> methods on other types; non-test code.</para>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class AvoidTaskDelayInE2ETestsAnalyzer : DiagnosticAnalyzer
     {

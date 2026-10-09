@@ -1,14 +1,13 @@
 using System;
 using System.Threading.Tasks;
-using Microsoft.Playwright;
 using Xunit;
 using static Microsoft.Playwright.Assertions;
 
 namespace E2E.Sample.Tests;
 
 /// <summary>
-/// Recommended Playwright.NET patterns. Compiles with all PWNET rules active.
-/// Skipped by default because it needs installed browsers and a running app.
+/// Recommended Playwright.NET patterns (page objects, web-first assertions, config-driven URLs).
+/// Compiles with all PWNET rules active. Skipped by default: needs Playwright browsers and a running app.
 /// </summary>
 public class CompliantExample
 {
@@ -18,16 +17,13 @@ public class CompliantExample
         // Environment-specific values come from configuration, not literals.
         var baseUrl = Environment.GetEnvironmentVariable("E2E_BASE_URL") ?? "http://localhost:5000";
 
-        using var playwright = await Playwright.CreateAsync();
-        await using var browser = await playwright.Chromium.LaunchAsync();
-        var page = await browser.NewPageAsync();
+        await using var session = await BrowserSession.StartAsync();
+        var login = await LoginPage.OpenAsync(session.Page, baseUrl);
 
-        await page.GotoAsync(baseUrl);
-
-        // Semantic locators + auto-waiting instead of CSS/XPath and Task.Delay.
-        await page.GetByRole(AriaRole.Button, new() { Name = "Sign in" }).ClickAsync();
+        // Interactions go through the page object (see PageObjects.cs).
+        await login.SignInAsync();
 
         // Web-first assertion retries until the condition holds.
-        await Expect(page.GetByTestId("dashboard")).ToBeVisibleAsync();
+        await Expect(login.Dashboard).ToBeVisibleAsync();
     }
 }

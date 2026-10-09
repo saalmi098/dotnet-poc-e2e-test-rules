@@ -7,7 +7,13 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace E2ETestRules
 {
-    /// <summary>PWNET005: Playwright <c>*Async</c> task-returning calls whose result is discarded.</summary>
+    /// <summary>
+    /// PWNET005 - Playwright <c>*Async</c> task-returning calls whose result is discarded.
+    /// <para><b>Finds:</b> <c>*Async</c> methods returning <c>Task</c>/<c>Task&lt;T&gt;</c>, declared on a type whose name or
+    /// namespace contains <c>Playwright</c>, when the result is dropped (bare statement or <c>_ = ...</c>).</para>
+    /// <para><b>Why:</b> un-awaited calls cause race conditions and unobserved exceptions.</para>
+    /// <para><b>Ignores:</b> awaited, stored, returned or passed-on tasks; non-Playwright async methods.</para>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class AwaitPlaywrightAsyncCallsAnalyzer : DiagnosticAnalyzer
     {

@@ -7,7 +7,14 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace E2ETestRules
 {
-    /// <summary>PWNET004: hardcoded non-local URLs and credential-like names/literals in test code.</summary>
+    /// <summary>
+    /// PWNET004 - hardcoded non-local URLs and credential-like names/literals in test code.
+    /// <para><b>Finds:</b> in test code, string literals with an <c>http(s)://</c> URL whose host is not loopback, and
+    /// variable/parameter/property names or string literals containing <c>password</c>, <c>passwd</c>, <c>secret</c>,
+    /// <c>token</c> or <c>apiKey</c> (case-insensitive).</para>
+    /// <para><b>Why:</b> environment URLs and credentials belong in configuration or user secrets.</para>
+    /// <para><b>Ignores:</b> <c>localhost</c>/<c>127.0.0.1</c>, scheme-only interpolation like <c>$"https://{host}"</c>, non-test code.</para>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class AvoidHardcodedEnvironmentDataAnalyzer : DiagnosticAnalyzer
     {

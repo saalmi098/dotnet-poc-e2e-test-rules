@@ -7,7 +7,13 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace E2ETestRules
 {
-    /// <summary>PWNET002: CSS/XPath selectors passed to Playwright <c>Locator(...)</c>.</summary>
+    /// <summary>
+    /// PWNET002 - CSS/XPath selectors passed to Playwright <c>Locator(...)</c>.
+    /// <para><b>Finds:</b> <c>Locator("...")</c> on <c>IPage</c>/<c>IFrame</c>/<c>ILocator</c>/<c>IFrameLocator</c>
+    /// with a constant selector starting with <c>css=</c>, <c>xpath=</c>, <c>//</c>, or containing <c>#</c>, <c>.</c>, <c>[</c>, <c>&gt;</c>.</para>
+    /// <para><b>Why:</b> CSS/XPath selectors are brittle; prefer GetByRole, GetByTestId or GetByLabel.</para>
+    /// <para><b>Ignores:</b> <c>GetBy*</c> calls, plain tag selectors like <c>"button"</c>, non-constant selectors.</para>
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class PreferSemanticLocatorsAnalyzer : DiagnosticAnalyzer
     {

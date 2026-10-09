@@ -48,13 +48,14 @@ internal static class AnalyzerTestHelper
             public interface IPage { object Locator(string selector); Task ClickAsync(); }
         }
 
-        namespace Microsoft.Playwright.Assertions
+        namespace Microsoft.Playwright
         {
-            public static class PlaywrightAssertions
+            public static class Assertions
             {
-                public static Asserts Expect(Microsoft.Playwright.ILocator locator) => new Asserts();
+                public static ILocatorAssertions Expect(ILocator locator) => new LocatorAssertionsImpl();
             }
-            public class Asserts { public Task ToBeVisibleAsync() => Task.CompletedTask; }
+            public interface ILocatorAssertions { Task ToBeVisibleAsync(); }
+            internal class LocatorAssertionsImpl : ILocatorAssertions { public Task ToBeVisibleAsync() => Task.CompletedTask; }
         }
 
         namespace Xunit

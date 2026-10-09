@@ -31,7 +31,7 @@ public class Pwnet003Tests
             using Xunit;
             using System.Threading.Tasks;
             using Microsoft.Playwright;
-            using static Microsoft.Playwright.Assertions.PlaywrightAssertions;
+            using static Microsoft.Playwright.Assertions;
             class T
             {
                 [Fact] public void A() { Assert.True(true); }
