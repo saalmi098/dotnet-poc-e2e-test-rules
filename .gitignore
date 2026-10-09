@@ -1,0 +1,28 @@
+## .NET
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+*.user
+*.suo
+*.userprefs
+*.nupkg
+*.snupkg
+TestResults/
+*.trx
+coverage*.xml
+
+## IDEs
+.vs/
+.vscode/
+.idea/
+*.DotSettings.user
+*.swp
+
+## OS
+Thumbs.db
+.DS_Store
+
+## Playwright
+playwright-report/
+test-results/
