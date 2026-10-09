@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -22,14 +22,6 @@
     <!-- Intentionally violating examples are kept as documentation only. -->
     <Compile Remove="Examples/**/*.cs" />
     <None Include="Examples/**/*.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="Pwnet006Violation.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Pwnet006Violation.cs" />
   </ItemGroup>
 
 </Project>
