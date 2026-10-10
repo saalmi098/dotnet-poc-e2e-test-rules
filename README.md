@@ -26,7 +26,7 @@ Category for all rules: `Playwright E2E`. Help link: `https://example.com/docs/e
 | PWNET001 | Fixed delays in test code: `Task.Delay`, `Thread.Sleep`, Playwright `WaitForTimeoutAsync`. Use auto-waiting or web-first assertions. |
 | PWNET002 | `Locator("...")` on `IPage`/`IFrame`/`ILocator`/`IFrameLocator` with a constant selector starting with `css=`, `xpath=`, `//`, containing `#`, `.`, `[`, `>`, or positional parts (`:nth-child(`, `:nth-of-type(`, `:first-child`, `:last-child`, `nth=`). Not reported: `GetBy*` calls, `text=`/`role=`/`data-testid=` engines and plain test-id attribute selectors like `[data-testid="save"]` (unless chained with `>>` or positional). |
 | PWNET003 | Test methods (see *test attributes* below) with no invocation named `Expect*`/`Assert*`/`Should*` (or called on an `Assert*`/`Should*` receiver such as `Assert.Equal`). Empty bodies are reported too (an empty test always passes); skipped/ignored tests are not. |
-| PWNET004 | Non-local `http(s)://` string literals; identifiers (variables, parameters, properties) and string literals containing `password`, `passwd`, `secret`, `token`, `apiKey` (case-insensitive). Test code only. |
+| PWNET004 | Absolute `http(s)://` string literals, including `localhost`/`127.0.0.1` (use relative paths and a configured base URL); identifiers (variables, parameters, properties) and string literals containing `password`, `passwd`, `secret`, `token`, `apiKey` (case-insensitive). Test code only. |
 | PWNET005 | Task-returning `*Async` calls whose containing type name/namespace contains `Playwright` (including `Expect(..).ToBe*Async()`) that are discarded (bare statement, `_ = ...`) or blocked on directly (`.Wait()`, `.Result`, `.GetAwaiter().GetResult()`). |
 | PWNET006 | Playwright API calls (any method on a type in `Microsoft.Playwright.*`) inside a **test class**, i.e. any class declaring a `[Fact]`/`[Theory]`/`[Test]`/`[TestMethod]` method, including its helper methods and lambdas. Page object classes (no test methods) may use Playwright freely. `Assertions.Expect(...)` and `*Assertions` types (`ToBeVisibleAsync`, ...) are allowed. |
 | PWNET007 | `async void` test methods. The runner cannot await them; xUnit v3 rejects them at runtime. Event handlers (no test attribute) are ignored. |
@@ -43,7 +43,7 @@ Suppress with `#pragma warning disable PWNET00x` / `restore`, `[SuppressMessage]
 
 Choices where the spec was open:
 - "Skip" (PWNET003): method name contains `Skip`, attribute has a `Skip` argument, or the body calls a `*Skip*` method (e.g. `Assert.Skip`).
-- Loopback: `localhost` and `127.0.0.1` are exempt from the URL check.
+- Loopback (PWNET004): `localhost` and `127.0.0.1` are reported like any other host; ports and container hosts differ per environment, and a localhost fallback hides missing configuration.
 - `https://{host}/x`: nothing is hardcoded after the scheme, so it is not reported.
 
 ## Candidates reviewed but not implemented
@@ -64,7 +64,7 @@ dotnet build
 dotnet test
 ```
 
-Requires the .NET 10 SDK. The sample's `CompliantExample` is skipped by default (needs Playwright browsers and a running app).
+Requires the .NET 10 SDK. The sample's `CompliantExample` is skipped by default (needs Playwright browsers, a running app and the `E2E_BASE_URL` environment variable).
 
 To see the rules fire, temporarily copy a file from `sample/E2E.Sample.Tests/Examples/` up one level and build.
 
@@ -100,7 +100,7 @@ Configure severities in `.editorconfig` (`dotnet_diagnostic.PWNET001.severity = 
 - **Heuristic, not semantic.** No test intent is detected.
 - **PWNET002**: any `.`, `#`, `[`, `>` in the selector counts, so `text=Save.` or `role=button[name="x"]` are reported. Only constant strings are checked; interpolated or computed selectors are not. Matches by Playwright interface name and namespace only.
 - **PWNET003**: a helper like `await LoginAndVerifyAsync()` hides the assertion and is reported, while a call named `AssertSomething()` that asserts nothing counts as an assertion. Attributes are matched by name only (no check that they come from xUnit).
-- **PWNET004**: `token`/`secret`/`password` anywhere in an identifier or literal matches, so UI labels like `GetByLabel("Password")` or `"token-expired"` are reported. Environment variable names containing those words are reported too. URLs with a non-loopback host are reported even if they are fixtures for external content.
+- **PWNET004**: `token`/`secret`/`password` anywhere in an identifier or literal matches, so UI labels like `GetByLabel("Password")` or `"token-expired"` are reported. Environment variable names containing those words are reported too. Every absolute URL is reported, including fixtures for external content and documentation strings.
 - **PWNET005**: only discarded results are detected (bare call, `_ =`). A task stored in a variable and never awaited is not reported. It overlaps with compiler CS4014 inside `async` methods but also covers non-async methods. Calls that are `.ConfigureAwait(false)`-ed without `await` are not detected.
 - **PWNET006**: one report per Playwright call, so `page.GetByRole(..).ClickAsync()` gives two. Property access (`page.Url`) is not detected. `Expect(page.Locator(..))` still reports the inner call. Test base classes holding Playwright setup are flagged if they declare a test method; put setup in a non-test class (see `BrowserSession` in the sample). Invocations in nested types are judged by the nested type, not the outer test class.
 - **PWNET001**: every `WaitForTimeoutAsync`/`Thread.Sleep`/`Task.Delay` in test code is reported, including deliberate ones (e.g. animation settling); suppress those with a justification. Condition-based waits (`WaitForURLAsync`, `WaitForResponseAsync`, ...) and `LoadState.NetworkIdle` are not checked.

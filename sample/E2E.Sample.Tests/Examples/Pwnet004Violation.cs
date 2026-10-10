@@ -16,6 +16,8 @@ public class Pwnet004Violation
     public async Task Hardcodes_environment_data()
     {
         await page.GotoAsync("https://staging.example.com/login"); // PWNET004
+        var url = "http://localhost:5000/x"; // PWNET004
+
         await page.GetByLabel("Name").FillAsync(AdminPassword);
         await Expect(page.GetByTestId("dashboard")).ToBeVisibleAsync();
     }

@@ -39,7 +39,7 @@ Wording below is paraphrased. Each link points to the exact section on the sourc
 - **Source:** heuristic, no explicit Playwright guidance.
 
 ### PWNET004: avoid hardcoded environment data
-- **What:** flags non-loopback `http(s)://` literals and credential-like names (`password`, `token`, `apiKey`, ...) in test code.
+- **What:** flags every absolute `http(s)://` literal (including `localhost`) and credential-like names (`password`, `token`, `apiKey`, ...) in test code.
 - **Why:** environment URLs and secrets belong in configuration or user secrets, not in test source.
 - **Source:** heuristic, project convention.
 

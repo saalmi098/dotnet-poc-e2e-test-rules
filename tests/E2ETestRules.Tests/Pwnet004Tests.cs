@@ -10,6 +10,8 @@ public class Pwnet004Tests
     [Theory]
     [InlineData("""class T { string Url = "https://staging.example.com/login"; }""")]
     [InlineData("""class T { string Url = "http://example.com"; }""")]
+    [InlineData("""class T { string Url = "http://localhost:5000/x"; }""")]
+    [InlineData("""class T { string Url = "https://127.0.0.1"; }""")]
     [InlineData("""class T { string password = "x"; }""")]
     [InlineData("""class T { string V = "my-api-token"; }""")]
     [InlineData("""class T { void M(string apiKey) { } }""")]
@@ -23,10 +25,9 @@ public class Pwnet004Tests
     }
 
     [Theory]
-    [InlineData("""class T { string Url = "http://localhost:5000/x"; }""")]
-    [InlineData("""class T { string Url = "https://localhost"; }""")]
+    [InlineData("""class T { string Path = "/login?next=/home"; }""")]
     [InlineData("""class T { string Name = "hello"; int count = 1; }""")]
-    public async Task Ignores_localhost_and_benign_values(string source)
+    public async Task Ignores_relative_paths_and_benign_values(string source)
     {
         Assert.Empty(await AnalyzerTestHelper.RunAsync(Analyzer, source));
     }
@@ -52,14 +53,14 @@ public class Pwnet004Tests
                 {
                     var a = $"https://{host}/x";
                     var b = "https://prod.example.com/password-reset";
-                    var c = "see ftp://x and http://localhost/ok";
+                    var c = "see ftp://x";
                 }
             }
             """;
 
         var diagnostics = await AnalyzerTestHelper.RunAsync(Analyzer, source);
 
-        // Only literal b: remote host AND a keyword, but reported once.
+        // Only literal b: URL AND a keyword, but reported once. ftp:// is not checked.
         Assert.Single(diagnostics);
     }
 }

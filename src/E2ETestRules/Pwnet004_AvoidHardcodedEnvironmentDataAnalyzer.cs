@@ -8,12 +8,13 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace E2ETestRules;
 
 /// <summary>
-/// PWNET004 - hardcoded non-local URLs and credential-like names/literals in test code.
-/// <para><b>Finds:</b> in test code, string literals with an <c>http(s)://</c> URL whose host is not loopback, and
+/// PWNET004 - hardcoded URLs and credential-like names/literals in test code.
+/// <para><b>Finds:</b> in test code, string literals with an absolute <c>http(s)://</c> URL (including <c>localhost</c>), and
 /// variable/parameter/property names or string literals containing <c>password</c>, <c>passwd</c>, <c>secret</c>,
 /// <c>token</c> or <c>apiKey</c> (case-insensitive).</para>
-/// <para><b>Why:</b> environment URLs and credentials belong in configuration or user secrets.</para>
-/// <para><b>Ignores:</b> <c>localhost</c>/<c>127.0.0.1</c>, scheme-only interpolation like <c>$"https://{host}"</c>, non-test code.</para>
+/// <para><b>Why:</b> environment URLs and credentials belong in configuration or user secrets. Even <c>localhost:5000</c> is
+/// environment-specific (port, container host) and hides a missing configuration.</para>
+/// <para><b>Ignores:</b> relative paths (<c>"/login"</c>), scheme-only interpolation like <c>$"https://{host}"</c>, non-test code.</para>
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public sealed class Pwnet004_AvoidHardcodedEnvironmentDataAnalyzer : DiagnosticAnalyzer
@@ -21,7 +22,6 @@ public sealed class Pwnet004_AvoidHardcodedEnvironmentDataAnalyzer : DiagnosticA
     public const string DiagnosticId = "PWNET004";
 
     private static readonly string[] SensitiveWords = ["password", "passwd", "secret", "token", "apikey"];
-    private static readonly string[] LoopbackHosts = ["localhost", "127.0.0.1"];
     private static readonly char[] HostTerminators = ['/', '?', '#', ':', '\\', '"', '\'', ' '];
 
     private static readonly DiagnosticDescriptor Rule = new(
@@ -62,7 +62,7 @@ public sealed class Pwnet004_AvoidHardcodedEnvironmentDataAnalyzer : DiagnosticA
             return;
         }
 
-        if (ContainsRemoteUrl(value) || ContainsSensitiveWord(value))
+        if (ContainsHardcodedUrl(value) || ContainsSensitiveWord(value))
         {
             context.ReportDiagnostic(Diagnostic.Create(Rule, context.Node.GetLocation()));
         }
@@ -102,7 +102,7 @@ public sealed class Pwnet004_AvoidHardcodedEnvironmentDataAnalyzer : DiagnosticA
         return false;
     }
 
-    private static bool ContainsRemoteUrl(string text)
+    private static bool ContainsHardcodedUrl(string text)
     {
         var start = 0;
         while (start < text.Length)
@@ -124,12 +124,7 @@ public sealed class Pwnet004_AvoidHardcodedEnvironmentDataAnalyzer : DiagnosticA
             var host = hostEnd < 0 ? text.Substring(start) : text.Substring(start, hostEnd - start);
 
             // "https://{baseHost}/x": nothing hardcoded after the scheme.
-            if (host.Length == 0)
-            {
-                continue;
-            }
-
-            if (Array.IndexOf(LoopbackHosts, host.ToLowerInvariant()) < 0)
+            if (host.Length > 0)
             {
                 return true;
             }
