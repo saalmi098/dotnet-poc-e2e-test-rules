@@ -19,4 +19,14 @@ public class Pwnet006Violation
     }
 
     private Task Helper() => page.ReloadAsync();       // PWNET006: whole test class is checked
+
+    [Fact]
+    public async Task Talks_to_playwright_via_page_object()
+    {
+        // uses page object model to avoid talking to Playwright directly -> no PWNET006 violation
+        var loginPage = await LoginPage.OpenAsync(page, "/login");
+        await loginPage.SignInAsync();
+        Assert.True(await loginPage.IsDoneVisible());
+        await Expect(loginPage.DoneButton).ToBeVisibleAsync();
+    }
 }

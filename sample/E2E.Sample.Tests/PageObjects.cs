@@ -42,6 +42,10 @@ public sealed class LoginPage
 
     public ILocator Dashboard => _page.GetByTestId("dashboard");
 
+    public ILocator DoneButton => Dashboard.GetByTestId("done");
+
+    public ILocator SignInButton => _page.GetByRole(AriaRole.Button, new() { Name = "Sign in" });
+
     public static async Task<LoginPage> OpenAsync(IPage page, string baseUrl)
     {
         await page.GotoAsync(baseUrl);
@@ -50,6 +54,6 @@ public sealed class LoginPage
 
     public Task SignInAsync()
     {
-        return _page.GetByRole(AriaRole.Button, new() { Name = "Sign in" }).ClickAsync();
+        return SignInButton.ClickAsync();
     }
 }
