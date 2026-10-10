@@ -5,7 +5,7 @@ namespace E2ETestRules.Tests;
 
 public class Pwnet004Tests
 {
-    private static readonly AvoidHardcodedEnvironmentDataAnalyzer Analyzer = new();
+    private static readonly Pwnet004_AvoidHardcodedEnvironmentDataAnalyzer Analyzer = new();
 
     [Theory]
     [InlineData("""class T { string Url = "https://staging.example.com/login"; }""")]

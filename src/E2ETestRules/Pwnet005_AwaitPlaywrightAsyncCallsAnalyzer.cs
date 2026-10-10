@@ -17,7 +17,7 @@ namespace E2ETestRules;
 /// <para><b>Ignores:</b> awaited, stored, returned or passed-on tasks; non-Playwright async methods.</para>
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public sealed class AwaitPlaywrightAsyncCallsAnalyzer : DiagnosticAnalyzer
+public sealed class Pwnet005_AwaitPlaywrightAsyncCallsAnalyzer : DiagnosticAnalyzer
 {
     public const string DiagnosticId = "PWNET005";
 

@@ -21,7 +21,7 @@ namespace E2ETestRules;
 /// more than one hop; reads wrapped in page-object methods.</para>
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public sealed class PreferWebFirstAssertionsAnalyzer : DiagnosticAnalyzer
+public sealed class Pwnet008_PreferWebFirstAssertionsAnalyzer : DiagnosticAnalyzer
 {
     public const string DiagnosticId = "PWNET008";
 

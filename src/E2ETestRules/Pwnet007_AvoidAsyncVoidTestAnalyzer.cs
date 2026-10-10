@@ -14,7 +14,7 @@ namespace E2ETestRules;
 /// <para><b>Ignores:</b> <c>async void</c> methods without a test attribute (event handlers).</para>
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public sealed class AvoidAsyncVoidTestAnalyzer : DiagnosticAnalyzer
+public sealed class Pwnet007_AvoidAsyncVoidTestAnalyzer : DiagnosticAnalyzer
 {
     public const string DiagnosticId = "PWNET007";
 

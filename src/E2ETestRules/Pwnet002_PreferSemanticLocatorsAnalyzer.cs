@@ -21,7 +21,7 @@ namespace E2ETestRules;
 /// <c>[data-testid="save"]</c>, unless they are chained (<c>&gt;&gt;</c>) or positional.</para>
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public sealed class PreferSemanticLocatorsAnalyzer : DiagnosticAnalyzer
+public sealed class Pwnet002_PreferSemanticLocatorsAnalyzer : DiagnosticAnalyzer
 {
     public const string DiagnosticId = "PWNET002";
 

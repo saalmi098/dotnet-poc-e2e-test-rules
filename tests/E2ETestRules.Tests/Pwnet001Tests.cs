@@ -5,7 +5,7 @@ namespace E2ETestRules.Tests;
 
 public class Pwnet001Tests
 {
-    private static readonly AvoidDelayInE2ETestsAnalyzer Analyzer = new();
+    private static readonly Pwnet001_AvoidDelayInE2ETestsAnalyzer Analyzer = new();
 
     private const string DelayCall = """
         using System.Threading.Tasks;

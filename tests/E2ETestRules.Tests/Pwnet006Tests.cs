@@ -5,7 +5,7 @@ namespace E2ETestRules.Tests;
 
 public class Pwnet006Tests
 {
-    private static readonly UsePageObjectsInTestsAnalyzer Analyzer = new();
+    private static readonly Pwnet006_UsePageObjectsInTestsAnalyzer Analyzer = new();
 
     private const string PageObjects = """
         using System.Threading.Tasks;

@@ -16,7 +16,7 @@ namespace E2ETestRules
     /// <para><b>Ignores:</b> <c>localhost</c>/<c>127.0.0.1</c>, scheme-only interpolation like <c>$"https://{host}"</c>, non-test code.</para>
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public sealed class AvoidHardcodedEnvironmentDataAnalyzer : DiagnosticAnalyzer
+    public sealed class Pwnet004_AvoidHardcodedEnvironmentDataAnalyzer : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "PWNET004";
 

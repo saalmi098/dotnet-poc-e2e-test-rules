@@ -5,7 +5,7 @@ namespace E2ETestRules.Tests;
 
 public class Pwnet009Tests
 {
-    private static readonly AvoidBypassingActionabilityAnalyzer Analyzer = new();
+    private static readonly Pwnet009_AvoidBypassingActionabilityAnalyzer Analyzer = new();
 
     private static string Wrap(string body) => $$"""
         using System.Threading.Tasks;

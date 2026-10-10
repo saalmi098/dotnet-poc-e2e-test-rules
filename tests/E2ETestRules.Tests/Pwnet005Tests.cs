@@ -5,7 +5,7 @@ namespace E2ETestRules.Tests;
 
 public class Pwnet005Tests
 {
-    private static readonly AwaitPlaywrightAsyncCallsAnalyzer Analyzer = new();
+    private static readonly Pwnet005_AwaitPlaywrightAsyncCallsAnalyzer Analyzer = new();
 
     private static string Wrap(string body) => $$"""
         using System.Threading.Tasks;

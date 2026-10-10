@@ -5,7 +5,7 @@ namespace E2ETestRules.Tests;
 
 public class Pwnet002Tests
 {
-    private static readonly PreferSemanticLocatorsAnalyzer Analyzer = new();
+    private static readonly Pwnet002_PreferSemanticLocatorsAnalyzer Analyzer = new();
 
     private static string Wrap(string body) => $$"""
         using Microsoft.Playwright;

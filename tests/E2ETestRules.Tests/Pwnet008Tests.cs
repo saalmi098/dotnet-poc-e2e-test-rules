@@ -5,7 +5,7 @@ namespace E2ETestRules.Tests;
 
 public class Pwnet008Tests
 {
-    private static readonly PreferWebFirstAssertionsAnalyzer Analyzer = new();
+    private static readonly Pwnet008_PreferWebFirstAssertionsAnalyzer Analyzer = new();
 
     private static string Wrap(string body) => $$"""
         using System.Threading.Tasks;

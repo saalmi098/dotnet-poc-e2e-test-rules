@@ -5,7 +5,7 @@ namespace E2ETestRules.Tests;
 
 public class Pwnet003Tests
 {
-    private static readonly RequireAssertionInTestAnalyzer Analyzer = new();
+    private static readonly Pwnet003_RequireAssertionInTestAnalyzer Analyzer = new();
 
     [Theory]
     [InlineData("using Xunit;", "[Fact]")]

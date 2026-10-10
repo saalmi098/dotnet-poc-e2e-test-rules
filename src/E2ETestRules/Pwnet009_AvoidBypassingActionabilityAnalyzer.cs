@@ -18,7 +18,7 @@ namespace E2ETestRules;
 /// suppress with a justification where the bypass is intended.</para>
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public sealed class AvoidBypassingActionabilityAnalyzer : DiagnosticAnalyzer
+public sealed class Pwnet009_AvoidBypassingActionabilityAnalyzer : DiagnosticAnalyzer
 {
     public const string DiagnosticId = "PWNET009";
 

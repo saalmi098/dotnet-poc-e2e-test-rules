@@ -16,7 +16,7 @@ namespace E2ETestRules;
 /// (<c>WaitForURLAsync</c>, <c>WaitForResponseAsync</c>, ...); non-test code.</para>
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public sealed class AvoidDelayInE2ETestsAnalyzer : DiagnosticAnalyzer
+public sealed class Pwnet001_AvoidDelayInE2ETestsAnalyzer : DiagnosticAnalyzer
 {
     public const string DiagnosticId = "PWNET001";
 

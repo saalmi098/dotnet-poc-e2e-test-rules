@@ -16,7 +16,7 @@ namespace E2ETestRules;
 /// <para><b>Ignores:</b> <c>Expect(...)</c> and <c>*Assertions</c> types; classes without test methods (page objects).</para>
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public sealed class UsePageObjectsInTestsAnalyzer : DiagnosticAnalyzer
+public sealed class Pwnet006_UsePageObjectsInTestsAnalyzer : DiagnosticAnalyzer
 {
     public const string DiagnosticId = "PWNET006";
 

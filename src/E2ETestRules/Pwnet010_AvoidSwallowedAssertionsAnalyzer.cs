@@ -18,7 +18,7 @@ namespace E2ETestRules;
 /// <c>when</c> filter, narrow exception types, catches that rethrow or assert, code outside test methods.</para>
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public sealed class AvoidSwallowedAssertionsAnalyzer : DiagnosticAnalyzer
+public sealed class Pwnet010_AvoidSwallowedAssertionsAnalyzer : DiagnosticAnalyzer
 {
     public const string DiagnosticId = "PWNET010";
 

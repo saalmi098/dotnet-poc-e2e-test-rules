@@ -16,7 +16,7 @@ namespace E2ETestRules;
 /// <para><b>Ignores:</b> skipped tests (<c>Skip</c> in the name, attribute argument or a called method such as <c>Assert.Skip</c>).</para>
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public sealed class RequireAssertionInTestAnalyzer : DiagnosticAnalyzer
+public sealed class Pwnet003_RequireAssertionInTestAnalyzer : DiagnosticAnalyzer
 {
     public const string DiagnosticId = "PWNET003";
 

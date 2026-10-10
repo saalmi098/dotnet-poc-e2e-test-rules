@@ -5,7 +5,7 @@ namespace E2ETestRules.Tests;
 
 public class Pwnet007Tests
 {
-    private static readonly AvoidAsyncVoidTestAnalyzer Analyzer = new();
+    private static readonly Pwnet007_AvoidAsyncVoidTestAnalyzer Analyzer = new();
 
     [Theory]
     [InlineData("using Xunit;", "[Fact]")]

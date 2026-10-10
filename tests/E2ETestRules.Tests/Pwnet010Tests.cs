@@ -5,7 +5,7 @@ namespace E2ETestRules.Tests;
 
 public class Pwnet010Tests
 {
-    private static readonly AvoidSwallowedAssertionsAnalyzer Analyzer = new();
+    private static readonly Pwnet010_AvoidSwallowedAssertionsAnalyzer Analyzer = new();
 
     private static string Wrap(string body) => $$"""
         using System;
