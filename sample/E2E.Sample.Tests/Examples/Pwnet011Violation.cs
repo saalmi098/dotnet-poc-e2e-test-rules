@@ -6,7 +6,6 @@ using static Microsoft.Playwright.Assertions;
 
 namespace E2E.Sample.Tests.Examples;
 
-#pragma warning disable PWNET006
 public class Pwnet011Violation
 {
     private readonly IPage page = null!;
@@ -51,4 +50,3 @@ public class CookieBannerPage(IPage page)
         }
     }
 }
-#pragma warning restore PWNET006
