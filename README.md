@@ -1,6 +1,6 @@
 # dotnet-poc-e2e-test-rules
 
-Roslyn analyzers (`PWNET001`–`PWNET010`) for Playwright.NET E2E test code. They run in Visual Studio, Rider, VS Code (C# Dev Kit) and `dotnet build`. SonarQube can import their output later.
+Roslyn analyzers (`PWNET001`–`PWNET011`) for Playwright.NET E2E test code. They run in Visual Studio, Rider, VS Code (C# Dev Kit) and `dotnet build`. SonarQube can import their output later.
 
 The analyzer targets `netstandard2.0` and has **no reference to Playwright**. It matches Playwright APIs by namespace and type name (`Microsoft.Playwright.IPage`, ...).
 
@@ -13,6 +13,8 @@ sample/E2E.Sample.Tests/        consumer project; Examples/ holds violating code
 ```
 
 ## Rules
+
+How each rule maps to Playwright and Microsoft best practices: [docs/best-practices.md](docs/best-practices.md).
 
 All rules default to **Warning**. The root `.editorconfig` raises PWNET001, PWNET005 and PWNET007 to **error**. `TreatWarningsAsErrors` is on, but `Directory.Build.props` lists all PWNET IDs in `WarningsNotAsErrors`, so `.editorconfig` decides: `warning` stays a warning, `error` fails the build.
 
@@ -31,8 +33,9 @@ Category for all rules: `Playwright E2E`. Help link: `https://example.com/docs/e
 | PWNET008 | Non-retrying assertions over browser state: xUnit `Assert.*` whose input is a one-shot Playwright read on `ILocator`/`IPage`/`IFrame` (`IsVisibleAsync`, `IsEnabledAsync`, `IsCheckedAsync`, `TextContentAsync`, `InnerTextAsync`, `InputValueAsync`, `GetAttributeAsync`, `CountAsync`, `TitleAsync`, `Url`, ...), directly or via a local initialized from one. The message names the matching web-first assertion (`ToBeVisibleAsync`, `ToHaveTextAsync`, ...). |
 | PWNET009 | Interactions that bypass actionability checks: `Force = true` on a Playwright options type, `DispatchEventAsync(...)`, `EvaluateAsync`/`EvalOnSelector*Async` with a constant script calling `.click()` or `dispatchEvent(`. Review warning; suppress with a justification where intended. |
 | PWNET010 | In a test method: a broad `catch` (none, `Exception`, `SystemException`, `TimeoutException`, Playwright exceptions, `XunitException`, no `when` filter) that neither rethrows nor asserts, around a `try` that contains an assertion other than `Fail`. The assertion can never fail the test. |
+| PWNET011 | (1) Test methods with any branch or loop: `if`, `switch`, `?:`, `for`/`foreach`/`while`/`do`; one report per test. (2) In any class, including page objects: a branch whose condition reads browser state once (`if (await banner.IsVisibleAsync())`), directly or via a local. `??`, `&&`, `\|\|`, `?.` are not counted. |
 
-Test attributes (PWNET003, PWNET006, PWNET007, PWNET010): xUnit `Fact`, `Theory`, matched by name.
+Test attributes (PWNET003, PWNET006, PWNET007, PWNET010, PWNET011): xUnit `Fact`, `Theory`, matched by name.
 
 "Test code" (PWNET001, PWNET004) means: file path contains `/e2e/` or `/tests/` (either slash direction, case-insensitive), or the assembly name ends with `.Tests`.
 
@@ -107,5 +110,6 @@ Configure severities in `.editorconfig` (`dotnet_diagnostic.PWNET001.severity = 
 - **PWNET008**: reads hidden in page-object methods (`await login.IsBannerVisibleAsync()`) are not seen. A local reassigned after its initializer is still judged by the initializer. Asserting a value read right after an explicit wait is still reported. In a test class the read call is also reported by PWNET006 (different smell).
 - **PWNET009**: only constant scripts are inspected; `.click()` written differently (`el.click( )`, `HTMLElement.prototype.click.call(el)`) is missed.
 - **PWNET010**: assertions are recognised by the same name heuristic as PWNET003. Swallowed failures of actions (not assertions) are not reported, to avoid flagging legitimate "dismiss banner if present" patterns. Only test methods are checked, not helpers or page objects.
+- **PWNET011**: loops over test data (table rows) count as branches; use `[Theory]` or suppress with a justification. Page objects are only checked for state-dependent branches, since plain logic there (optional parameters, loops over inputs) is normal. A test helper method in the test class is not counted. State reads hidden in page-object methods (`if (await page.IsBannerShownAsync())`) are not seen.
 - PWNET001/004 depend on path conventions; projects not named `*.Tests` and not under a `tests`/`e2e` folder are skipped.
 - `Microsoft.CodeAnalysis.CSharp` 4.11 is referenced, so the host needs VS 17.11 / .NET SDK 8.0.400 or newer.

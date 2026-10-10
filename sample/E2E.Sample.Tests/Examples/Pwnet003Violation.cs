@@ -16,7 +16,7 @@ public class Pwnet003Violation
     }
 
     [Fact]
-    public void Placeholder_generated_later() // PWNET003: empty test always passes
+    public void Placeholder_generated_later() // PWNET003
     {
         // TODO
     }
