@@ -18,3 +18,8 @@ dotnet_diagnostic.PWNET003.severity = warning
 dotnet_diagnostic.PWNET004.severity = warning
 dotnet_diagnostic.PWNET005.severity = error
 dotnet_diagnostic.PWNET006.severity = warning
+# async void tests are never run correctly by the runner: deterministic, so error.
+dotnet_diagnostic.PWNET007.severity = error
+dotnet_diagnostic.PWNET008.severity = warning
+dotnet_diagnostic.PWNET009.severity = warning
+dotnet_diagnostic.PWNET010.severity = warning

@@ -3,6 +3,8 @@
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- PWNET rules keep the severity set in .editorconfig: "warning" stays a warning, "error" fails the build. -->
+    <!-- <WarningsNotAsErrors>$(WarningsNotAsErrors);PWNET001;PWNET002;PWNET003;PWNET004;PWNET005;PWNET006;PWNET007;PWNET008;PWNET009;PWNET010</WarningsNotAsErrors> -->
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
 </Project>

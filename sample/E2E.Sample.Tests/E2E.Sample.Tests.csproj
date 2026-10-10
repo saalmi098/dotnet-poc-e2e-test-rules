@@ -23,5 +23,5 @@
     <Compile Remove="Examples/**/*.cs" />
     <None Include="Examples/**/*.cs" />
   </ItemGroup>
-
+  
 </Project>

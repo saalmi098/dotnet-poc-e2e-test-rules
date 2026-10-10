@@ -10,8 +10,6 @@ public class Pwnet003Tests
     [Theory]
     [InlineData("using Xunit;", "[Fact]")]
     [InlineData("using Xunit;", "[Theory]")]
-    [InlineData("using NUnit.Framework;", "[Test]")]
-    [InlineData("using Microsoft.VisualStudio.TestTools.UnitTesting;", "[TestMethod]")]
     public async Task Reports_test_without_assertion(string usings, string attribute)
     {
         var source = $$"""
@@ -53,16 +51,49 @@ public class Pwnet003Tests
     }
 
     [Fact]
-    public async Task Ignores_empty_skipped_and_expression_bodied_assertion()
+    public async Task Reports_empty_test_bodies()
     {
         const string source = """
             using Xunit;
             class T
             {
                 [Fact] public void Empty() { }
+                [Fact] public void OnlyComment()
+                {
+                    // TODO: implement
+                }
+            }
+            """;
+
+        Assert.Equal(2, (await AnalyzerTestHelper.RunAsync(Analyzer, source)).Length);
+    }
+
+    [Fact]
+    public async Task Ignores_skipped_and_expression_bodied_assertion()
+    {
+        const string source = """
+            using Xunit;
+            class T
+            {
+                [Fact(Skip = "later")] public void Empty() { }
                 [Fact(Skip = "later")] public void Skipped() { var x = 1; }
                 [Fact] public void SkipByName_SkipMe() { var x = 1; }
                 [Fact] public void Expr() => Assert.True(true);
+            }
+            """;
+
+        Assert.Empty(await AnalyzerTestHelper.RunAsync(Analyzer, source));
+    }
+
+    [Fact]
+    public async Task Ignores_Assert_Skip_and_non_xUnit_test_attributes()
+    {
+        const string source = """
+            using Xunit;
+            class T
+            {
+                [Fact] public void A() { var x = 1; Assert.Skip("not ready"); }
+                [OtherFramework.Test] public void B() { var x = 1; }
             }
             """;
 

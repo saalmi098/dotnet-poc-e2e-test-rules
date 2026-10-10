@@ -31,8 +31,15 @@ internal static class AnalyzerTestHelper
                 ILocator GetByLabel(string label);
                 ILocator GetByText(string text);
                 ILocator GetByPlaceholder(string text);
-                Task ClickAsync();
+                ILocator Nth(int index);
+                Task ClickAsync(LocatorClickOptions? options = null);
                 Task<string?> TextContentAsync();
+                Task<bool> IsVisibleAsync();
+                Task<string> InputValueAsync();
+                Task<string?> GetAttributeAsync(string name);
+                Task<int> CountAsync();
+                Task DispatchEventAsync(string type, object? eventInit = null);
+                Task<object?> EvaluateAsync(string expression, object? arg = null);
             }
 
             public interface IFrame : ILocator { }
@@ -40,7 +47,13 @@ internal static class AnalyzerTestHelper
             public interface IPage : ILocator
             {
                 Task GotoAsync(string url);
+                Task WaitForTimeoutAsync(float timeout);
+                Task<string> TitleAsync();
+                string Url { get; }
             }
+
+            public class LocatorClickOptions { public bool? Force { get; set; } }
+            public class PlaywrightException : System.Exception { }
         }
 
         namespace SomeOther
@@ -62,11 +75,19 @@ internal static class AnalyzerTestHelper
         {
             public class FactAttribute : System.Attribute { public string? Skip { get; set; } }
             public class TheoryAttribute : FactAttribute { }
-            public static class Assert { public static void Equal(object a, object b) { } public static void True(bool b) { } }
+            public static class Assert
+            {
+                public static void Equal(object? a, object? b) { }
+                public static void True(bool b) { }
+                public static void Fail(string message) { }
+                public static void Skip(string reason) { }
+                public static void NotNull(object? value) { }
+            }
         }
 
-        namespace NUnit.Framework { public class TestAttribute : System.Attribute { } }
-        namespace Microsoft.VisualStudio.TestTools.UnitTesting { public class TestMethodAttribute : System.Attribute { } }
+        namespace Xunit.Sdk { public class XunitException : System.Exception { } }
+
+        namespace OtherFramework { public class TestAttribute : System.Attribute { } }
         """;
 
     private static readonly ImmutableArray<MetadataReference> References = BuildReferences();

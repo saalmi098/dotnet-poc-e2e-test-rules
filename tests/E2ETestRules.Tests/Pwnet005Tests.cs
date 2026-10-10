@@ -67,4 +67,52 @@ public class Pwnet005Tests
 
         Assert.Single(diagnostics);
     }
+
+    [Fact]
+    public async Task Reports_unawaited_web_first_assertion()
+    {
+        var source = """
+            using System.Threading.Tasks;
+            using Microsoft.Playwright;
+            using static Microsoft.Playwright.Assertions;
+            class T { async Task M(ILocator loc) { Expect(loc).ToBeVisibleAsync(); await Task.CompletedTask; } }
+            """;
+
+        Assert.Single(await AnalyzerTestHelper.RunAsync(Analyzer, source));
+    }
+
+    [Theory]
+    [InlineData("page.GotoAsync(\"/x\").Wait();")]
+    [InlineData("var t = loc.TextContentAsync().Result;")]
+    [InlineData("loc.ClickAsync().GetAwaiter().GetResult();")]
+    public async Task Reports_blocking_on_playwright_calls(string body)
+    {
+        var source = $$"""
+            using Microsoft.Playwright;
+            class T { void M(IPage page, ILocator loc) { {{body}} } }
+            """;
+
+        Assert.Single(await AnalyzerTestHelper.RunAsync(Analyzer, source));
+    }
+
+    [Fact]
+    public async Task Ignores_blocking_on_non_Playwright_tasks_and_GetAwaiter_alone()
+    {
+        const string source = """
+            using System.Threading.Tasks;
+            using Microsoft.Playwright;
+            class Repo { public Task<int> LoadAsync() => Task.FromResult(1); }
+            class T
+            {
+                void M(Repo r, ILocator loc)
+                {
+                    var n = r.LoadAsync().Result;
+                    var awaiter = loc.ClickAsync().GetAwaiter();
+                    awaiter.GetResult();
+                }
+            }
+            """;
+
+        Assert.Empty(await AnalyzerTestHelper.RunAsync(Analyzer, source));
+    }
 }

@@ -8,10 +8,12 @@ namespace E2E.Sample.Tests.Examples;
 
 public class Pwnet004Violation
 {
+    private readonly IPage page = null!;
+
     private const string AdminPassword = "hunter2"; // PWNET004 (identifier + literal)
 
     [Fact]
-    public async Task Hardcodes_environment_data(IPage page)
+    public async Task Hardcodes_environment_data()
     {
         await page.GotoAsync("https://staging.example.com/login"); // PWNET004
         await page.GetByLabel("Name").FillAsync(AdminPassword);

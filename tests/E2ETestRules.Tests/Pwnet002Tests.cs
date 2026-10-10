@@ -78,4 +78,31 @@ public class Pwnet002Tests
         // Pragma suppression is applied by Roslyn: nothing left that is active.
         Assert.DoesNotContain(diagnostics, d => !d.IsSuppressed);
     }
+
+    [Theory]
+    [InlineData("page.Locator(\"li:nth-child(3)\");")]
+    [InlineData("page.Locator(\"tr:last-child td\");")]
+    [InlineData("page.Locator(\"text=Save >> nth=1\");")]
+    [InlineData("page.Locator(\"[data-testid=row] >> td\");")]
+    public async Task Reports_structural_and_chained_selectors(string body)
+    {
+        Assert.Single(await AnalyzerTestHelper.RunAsync(Analyzer, Wrap(body)));
+    }
+
+    [Theory]
+    [InlineData("page.Locator(\"[data-testid='save']\");")]
+    [InlineData("page.Locator(\"[data-test-id=save-button]\");")]
+    [InlineData("page.Locator(\"data-testid=save\");")]
+    [InlineData("page.Locator(\"text=Save changes.\");")]
+    [InlineData("page.Locator(\"role=button[name='Save']\");")]
+    public async Task Ignores_test_id_and_user_facing_engine_selectors(string body)
+    {
+        Assert.Empty(await AnalyzerTestHelper.RunAsync(Analyzer, Wrap(body)));
+    }
+
+    [Fact]
+    public async Task Edge_test_id_selector_with_extra_css_is_still_reported()
+    {
+        Assert.Single(await AnalyzerTestHelper.RunAsync(Analyzer, Wrap("page.Locator(\"div [data-testid=save]\");")));
+    }
 }
